@@ -33,3 +33,14 @@
   margin-left: 7px;
   padding-left: 8px;
 }
+
+/* spacing below each day except last */
+#content div.day:not(:last-of-type) {
+  margin-bottom: 100px;
+}
+
+/* formatting of description paragraph */
+#content div.events div.event p.description {
+  color: rgba(0, 0, 0, 0.5);
+  line-height: 1.3em;
+}

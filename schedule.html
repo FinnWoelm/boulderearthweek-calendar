@@ -113,7 +113,7 @@
         $("#" + startDate.toString().substr(0,10) + " div.events").append(
           '<div class="event">'
             + '<p><strong>' + this['summary'] + '</strong></p>'
-            + '<p>' + ('description' in this ? this['description'].excerpt(500) : "No description provided.") + '</p>'
+            + '<p class="description">' + ('description' in this ? this['description'].excerpt(500) : "No description provided.") + '</p>'
             + '<p> at ' + this['location'] + '</p>'
             + '<p>' + startDate.get12HourTime() + ' - ' + endDate.get12HourTime() + '</p>'
             + '</div>'
