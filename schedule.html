@@ -6,122 +6,181 @@
 
 <body>
 
+<div class="back-button" style="display:none;">
+  <a href="?">&lt;&mdash; View Full Schedule</a>
+</div>
 <div id="content">
+  
+
+</div>
+<div class="back-button" style="display:none;">
+  <a href="?">&lt;&mdash; View Full Schedule</a>
 </div>
 <script type="text/javascript">
 
-  /* CONSTANTS */
-  var WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]; // the days of the week Sun-Sat
-  var MONTHS = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ]; // months Jan-Dec
- 
- 
-  /* trims a string to x characters and adds '...' */
-  String.prototype.excerpt = function( length ) {
-    if (typeof this === 'undefined') return "";  
-    if (this.length <= length) return this;
-    
-    var excerpt = this.substr(0, length-3);
-    
-    return excerpt.substr(0, excerpt.lastIndexOf(" ")) + " ...";
-  }
- 
-  /* repeats a string an arbitrary number of times */
-  /* from: http://www.webreference.com/programming/javascript/jkm3/3.html */
-  function stringFill3(x, n) {
-    var s = '';
-    for (;;) {
-      if (n & 1) s += x;
-      n >>= 1;
-      if (n) x += x;
-      else break;
-    }
-    return s;
-  }
- 
-  /* ensureDigits adds a necessary amount of 0s to a string */
-  Number.prototype.ensureDigits = function (count) {
-    if (!count || count < 0) return "";
-    
-    return stringFill3('0', count-this.toString().length) + this.toString();
-  }
- 
-  /* gets the time in 12-hour format */
-  Date.prototype.get12HourTime = function() {
-    var is_pm = this.getHours() >= 12,
-    hours = this.getHours() % 12 == 0 ? 12 : this.getHours() % 12;
-    
-    return hours + ":" + this.getMinutes().ensureDigits(2) + (is_pm ? " pm" : " am");
-  }
- 
-  /* getTimezone() gets the timezone from a Date */
-  Date.prototype.getTimezone = function() {
+    /* CONSTANTS */
+    var WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]; // the days of the week Sun-Sat
+    var MONTHS = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ]; // months Jan-Dec
 
-    var hours = Math.floor(this.getTimezoneOffset() / 60);
-    var minutes = this.getTimezoneOffset() % 60;
+    /* trims a string to x characters and adds '...' */
+    String.prototype.excerpt = function( length ) {
+      if (typeof this === 'undefined') return "";  
+      if (this.length <= length) return this;
+      
+      var excerpt = this.substr(0, length-3);
+      
+      return excerpt.substr(0, excerpt.lastIndexOf(" ")) + " ...";
+    }
+   
+    /* repeats a string an arbitrary number of times */
+    /* from: http://www.webreference.com/programming/javascript/jkm3/3.html */
+    function stringFill3(x, n) {
+      var s = '';
+      for (;;) {
+        if (n & 1) s += x;
+        n >>= 1;
+        if (n) x += x;
+        else break;
+      }
+      return s;
+    }
+   
+    /* ensureDigits adds a necessary amount of 0s to a string */
+    Number.prototype.ensureDigits = function (count) {
+      if (!count || count < 0) return "";
+      
+      return stringFill3('0', count-this.toString().length) + this.toString();
+    }
+   
+    /* gets the time in 12-hour format */
+    Date.prototype.get12HourTime = function() {
+      var is_pm = this.getHours() >= 12,
+      hours = this.getHours() % 12 == 0 ? 12 : this.getHours() % 12;
+      
+      return hours + ":" + this.getMinutes().ensureDigits(2) + (is_pm ? " pm" : " am");
+    }
+   
+    /* getTimezone() gets the timezone from a Date */
+    Date.prototype.getTimezone = function() {
+
+      var hours = Math.floor(this.getTimezoneOffset() / 60);
+      var minutes = this.getTimezoneOffset() % 60;
+      
+      return (hours > 0 ? "-" : "-") + hours.ensureDigits(2) + ":" + minutes.ensureDigits(2);
+    }
+   
+    /* override the toString() function to fit Google's format */
+    Date.prototype.toString = function () {
+      if (isNaN(this)) return "Invalid Date.";
+      
+      return this.getFullYear() + "-" + (this.getMonth()+1).ensureDigits(2) + "-" + this.getDate().ensureDigits(2)
+      + "T" + this.getHours().ensureDigits(2) + ":" + this.getMinutes().ensureDigits(2) + ":" + this.getSeconds().ensureDigits(2) + this.getTimezone();
+    };
+
+
+  /* renders a calendar with a given CALENDAR_ID */
+  function showCalendar(CALENDAR_ID) {
+     
+    /* set start and end date */
+    var startDate = new Date("2016-04-18T00:00:00-06:00"); // Monday, April 24 (or now)
+    var endDate = new Date("2016-04-24T23:59:59-06:00"); // Friday, April 24
+      
+    /* create a section for each day */
+    for (var i = new Date(startDate); i < endDate; i.setDate(i.getDate()+1)) {
     
-    return (hours > 0 ? "-" : "-") + hours.ensureDigits(2) + ":" + minutes.ensureDigits(2);
-  }
- 
-  /* override the toString() function to fit Google's format */
-  Date.prototype.toString = function () {
-    if (isNaN(this)) return "Invalid Date.";
-    
-    return this.getFullYear() + "-" + (this.getMonth()+1).ensureDigits(2) + "-" + this.getDate().ensureDigits(2)
-    + "T" + this.getHours().ensureDigits(2) + ":" + this.getMinutes().ensureDigits(2) + ":" + this.getSeconds().ensureDigits(2) + this.getTimezone();
-  };
- 
-  /* set start and end date */
-  var startDate = new Date("2016-04-18T00:00:00-06:00"); // Monday, April 24 (or now)
-  var endDate = new Date("2016-04-24T23:59:59-06:00"); // Friday, April 24
-    
-  /* create a section for each day */
-  for (var i = new Date(startDate); i < endDate; i.setDate(i.getDate()+1)) {
-  
-    // title goes in here
-    var title_wrapper = 
-    '<div class="title">\
-      <hr>\
-      <h2><span>' + WEEKDAYS[i.getDay()] + ', ' + MONTHS[i.getMonth()] + ' ' + i.getDate() + '</span></h2>\
-    </div>';
-    
-    // events go in here
-    var events_wrapper = 
-    '<div class="events"></div>';
-    
-    // create wrapping element with id=YYYY-MM-DD
-    $("#content").append('<div id="' + i.toString().substr(0,10) + '" class="day">'
-      + title_wrapper
-      + events_wrapper
-      + '</div>');
-  }
-    
-  $.getJSON( "https://www.googleapis.com/calendar/v3/calendars/cuecenter@gmail.com/events?key=AIzaSyCOz43RDSNPQTZtpssAUW5Rk41-wGi3pxA&singleEvents=true"
-    + "&timeMin=" + new Date( Math.max( startDate, new Date() ) )
-    + "&timeMax=" + endDate
-    + "&orderBy=startTime&maxResults=50", function( data ) {
+      // title goes in here
+      var title_wrapper = 
+      '<div class="title">\
+        <hr>\
+        <h2><span>' + WEEKDAYS[i.getDay()] + ', ' + MONTHS[i.getMonth()] + ' ' + i.getDate() + '</span></h2>\
+      </div>';
+      
+      // events go in here
+      var events_wrapper = 
+      '<div class="events"></div>';
+      
+      // create wrapping element with id=YYYY-MM-DD
+      $("#content").append('<div id="' + i.toString().substr(0,10) + '" class="day">'
+        + title_wrapper
+        + events_wrapper
+        + '</div>');
+    }
+      
+    $.getJSON( "https://www.googleapis.com/calendar/v3/calendars/" + CALENDAR_ID + "/events?key=AIzaSyCOz43RDSNPQTZtpssAUW5Rk41-wGi3pxA&singleEvents=true"
+      + "&timeMin=" + new Date( Math.max( startDate, new Date() ) )
+      + "&timeMax=" + endDate
+      + "&orderBy=startTime&maxResults=50", function( data ) {
+            
+        var items = {};
+        
+        $.each(data["items"], function(i) {
+        
+          var startDate,
+          endDate;
+        
+          startDate = new Date( 'dateTime' in this['start'] ? this['start']['dateTime'] : this['start']['date'] );
+          endDate = new Date( 'dateTime' in this['end'] ? this['end']['dateTime'] : this['end']['date'] );
           
-      var items = {};
-      
-      $.each(data["items"], function(i) {
-      
+          $("#" + startDate.toString().substr(0,10) + " div.events").append(
+            '<a href="?event_id=' + this['id'] + '">'
+              + '<div class="event">'
+              + '<p><strong>' + this['summary'] + '</strong></p>'
+              + '<p class="description">' + ('description' in this ? this['description'].excerpt(500) : "No description provided.") + '</p>'
+              + '<p> at ' + this['location'] + '</p>'
+              + '<p>' + startDate.get12HourTime() + ' - ' + endDate.get12HourTime() + '</p>'
+              + '</div>'
+              + '</a>'
+          );
+            
+          //items.push( "<div class='event'><p><strong>" + this['summary'] + "</strong></p><p>" + this['description'] + "</p></div>" );
+        });
+    });
+  }
+
+  /* shows a single event */
+  function showEvent(CALENDAR_ID, EVENT_ID) {
+  
+    $(".back-button").show();
+  
+  
+    $.getJSON( "https://www.googleapis.com/calendar/v3/calendars/" + CALENDAR_ID + "/events/" + EVENT_ID + "?key=AIzaSyCOz43RDSNPQTZtpssAUW5Rk41-wGi3pxA&singleEvents=true", function( data ) {
+            
         var startDate,
         endDate;
-      
-        startDate = new Date( 'dateTime' in this['start'] ? this['start']['dateTime'] : this['start']['date'] );
-        endDate = new Date( 'dateTime' in this['end'] ? this['end']['dateTime'] : this['end']['date'] );
         
-        $("#" + startDate.toString().substr(0,10) + " div.events").append(
-          '<div class="event">'
-            + '<p><strong>' + this['summary'] + '</strong></p>'
-            + '<p class="description">' + ('description' in this ? this['description'].excerpt(500) : "No description provided.") + '</p>'
-            + '<p> at ' + this['location'] + '</p>'
-            + '<p>' + startDate.get12HourTime() + ' - ' + endDate.get12HourTime() + '</p>'
-            + '</div>'
+        startDate = new Date( 'dateTime' in data['start'] ? data['start']['dateTime'] : data['start']['date'] );
+        endDate = new Date( 'dateTime' in data['end'] ? data['end']['dateTime'] : data['end']['date'] );        
+                
+        $("#content").append(
+        
+        '<div class="event">'
+        + '<h1>' + data['summary'] +  '</h1>'
+        + '<p>' + WEEKDAYS[startDate.getDay()] + ', ' + MONTHS[startDate.getMonth()] + ' ' + startDate.getDate() + ', ' + startDate.get12HourTime() + ' - ' + endDate.get12HourTime()
+        + ' at ' + data['location'] + '</p>'
+        + '<p class="description">' + data['description'].replace('\n', '<br>').replace(/((http|https|ftp):\/\/[\w?=&.\/-;#~%-]+(?![\w\s?&.\/;#~%"=-]*>))/g, '<a target="_blank" href="$1">$1</a> ') + '</p>'
+        + '</div>'
+        
         );
-          
-        //items.push( "<div class='event'><p><strong>" + this['summary'] + "</strong></p><p>" + this['description'] + "</p></div>" );
-      });
-  });
+
+        
+    }).fail(function(d) {
+        $("#content").append("<h1>Sorry, event not found! :(</h1>");
+    });
+  }
+
+  // Variables
+  var calendar_id = "8drem0mi2nedaj90mofk13sao0@group.calendar.google.com";
+
+  // get the params
+  var queryDict = {}
+  location.search.substr(1).split("&").forEach(function(item) {queryDict[item.split("=")[0]] = item.split("=")[1]})
+  
+  // if event_id is set, show just the event
+  if (queryDict['event_id'] != null)
+    showEvent(calendar_id, queryDict['event_id']);
+    
+  else // else show the full calendar
+    showCalendar(calendar_id); 
 
 
 </script>

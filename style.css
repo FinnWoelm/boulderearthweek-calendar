@@ -3,10 +3,10 @@
   margin: 0;
 }
 
-/* events have spacing on the bottom */
+/* events have spacing on top and bottom */
 #content div.events div.event {
+  padding-top: 15px;
   padding-bottom: 15px;
-  margin-bottom: 15px;
 }
 
 /* events have a line at bottom unless they are the last event */
@@ -29,18 +29,52 @@
 }
 
 /* shift events a little bit to the right */
-#content div.events {
-  margin-left: 7px;
-  padding-left: 8px;
+#content div.events div.event {
+  padding-left: 15px;
 }
 
 /* spacing below each day except last */
 #content div.day:not(:last-of-type) {
-  margin-bottom: 100px;
+  margin-bottom: 50px;
 }
 
 /* formatting of description paragraph */
 #content div.events div.event p.description {
   color: rgba(0, 0, 0, 0.5);
   line-height: 1.3em;
+}
+
+/* events are clickable */
+#content div.events div.event {
+  cursor: pointer;
+}
+
+/* events have hover effect */
+#content div.events div.event:hover {
+  background-color: #CDDC39;
+}
+
+/* disable link styling */
+#content div.events a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* style back button */
+.back-button a {
+  background-color: #CDDC39;
+  text-decoration: none;
+  padding: 10px;
+  color: inherit;
+}
+
+.back-button:first-of-type {
+  padding-bottom: 30px;
+  border-bottom: 1px solid gray;
+}
+
+.back-button:last-of-type {
+  margin-top: 30px;
+  padding-top: 30px;
+  border-top: 1px solid gray;
 }
